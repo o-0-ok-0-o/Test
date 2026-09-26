@@ -1,0 +1,132 @@
+/* =========================================================
+   layout.css — каркас: шапка, навигация, контейнер, тосты,
+   модалки, конфетти
+   ========================================================= */
+
+/* Шапка */
+.topbar {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 14px 16px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 20;
+}
+.topbar-left { display: flex; align-items: center; gap: 20px; min-width: 0; }
+.logo {
+  font-weight: 700; font-size: 1.05rem;
+  display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+  color: var(--text);
+}
+.logo .ic { color: var(--primary); }
+
+/* Десктопная навигация (в шапке, скрыта на мобильных) */
+.desktop-nav { display: none; gap: 4px; }
+.desktop-nav .nav-item {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: none; border: none; font-family: inherit; font-size: 0.92rem;
+  color: var(--muted); font-weight: 600;
+  padding: 9px 14px; min-height: 40px; cursor: pointer; border-radius: 10px;
+  transition: color 0.15s, background 0.15s;
+}
+.desktop-nav .nav-item:hover { color: var(--primary); background: var(--primary-light); }
+.desktop-nav .nav-item.active { color: var(--primary); background: var(--primary-light); }
+
+.topbar-right { display: flex; gap: 10px; align-items: center; }
+.xp-badge {
+  background: var(--primary-light); color: var(--primary);
+  padding: 6px 12px; border-radius: 20px; font-weight: 600; font-size: 0.9rem;
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+}
+.icon-btn {
+  min-height: 44px; min-width: 44px; border: 1px solid var(--border);
+  background: var(--card); border-radius: 12px;
+  color: var(--text); cursor: pointer; transition: transform 0.15s;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.icon-btn:hover { transform: scale(1.08); }
+
+/* Нижняя мобильная навигация */
+.mobile-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 30;
+  display: flex; justify-content: space-around;
+  background: var(--card); border-top: 1px solid var(--border);
+  padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+}
+.mobile-nav .nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  background: none; border: none; font-family: inherit;
+  color: var(--muted);
+  min-height: 48px; min-width: 64px; cursor: pointer; border-radius: 10px;
+}
+.mobile-nav .nav-item span { font-size: 0.68rem; font-weight: 600; }
+.mobile-nav .nav-item.active { color: var(--primary); }
+
+/* Контейнер */
+.container { max-width: 720px; margin: 0 auto; padding: 20px 16px; }
+.container.wide { max-width: 960px; }
+.screen { display: none; animation: fadeIn 0.35s ease; }
+.screen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+.hero { text-align: center; margin: 24px 0; }
+
+/* Хлебные крошки */
+.crumbs {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-size: 0.85rem; color: var(--muted); margin-bottom: 14px;
+}
+.crumbs a { color: var(--muted); display: inline-flex; align-items: center; gap: 4px; }
+.crumbs a:hover { color: var(--primary); }
+.crumbs .crumb-sep { color: var(--border); }
+.crumbs .current { color: var(--text); font-weight: 600; }
+
+/* Тосты */
+.toast {
+  position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%) translateY(20px);
+  background: var(--primary); color: #fff;
+  padding: 10px 18px; border-radius: 24px; font-weight: 600;
+  opacity: 0; pointer-events: none; transition: 0.3s; z-index: 50;
+  max-width: 90vw; text-align: center;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Конфетти */
+.confetti-layer { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 40; }
+.confetti-piece {
+  position: absolute; top: -12px; width: 9px; height: 14px; border-radius: 2px;
+  animation: confettiFall linear forwards;
+}
+@keyframes confettiFall { to { transform: translateY(105vh) rotate(720deg); } }
+
+/* Модальные окна */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0, 0, 0, 0.45);
+  z-index: 90; display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+}
+.modal {
+  background: var(--card); border-radius: var(--radius);
+  padding: 24px 20px; max-width: 460px; width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease;
+  max-height: 86vh; overflow-y: auto;
+}
+.modal h3 { margin-bottom: 10px; }
+
+/* Адаптив */
+@media (min-width: 768px) {
+  body { padding-bottom: 20px; }
+  .mobile-nav { display: none; }
+  .desktop-nav { display: flex; }
+  .container { padding: 34px 28px; }
+  .container.wide { max-width: 1000px; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
