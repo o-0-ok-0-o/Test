@@ -1,0 +1,51 @@
+ISSUES 45
+-3-4.js:260 ODD_QUOTES(7) ['Выбери сокращённую форму для «she is».', ["she's", "he's", "they're"], 0, 'She is сокращается до she\'s.'],
+curriculum-3-4.js:558 ODD_QUOTES(9) ['Как сказать «Я не люблю кофе»?', ['I no like coffee.', "I don't like coffee.", 'I not like coffee.'], 1, 'От
+# curriculum-3-4.js: topics=27 [3кл:13 4кл:14] tests=54 questions=270
+curriculum-5-7.js:653 ODD_QUOTES(9) ['Впишите отрицательную форму: He ___ (not come) on Monday.', null, ['will not come', "won't come"], 'Отрицани
+# curriculum-5-7.js: topics=41 [5кл:10 6кл:13 7кл:18] tests=82 questions=410
+# curriculum-8.js: topics=49 [8кл:49] tests=98 questions=491
+curriculum-9-11.js:1496 ODD_QUOTES(7) ['Выберите верную форму: They ... their homework yet.', ["didn't finish", "haven't finished", "don't finish"],
+curriculum-9-11.js:1544 ODD_QUOTES(7) ['Раскройте скобки, используя форму типа 3: If she had taken a taxi, she (not/be) ... late yesterday.', null, 
+curriculum-9-11.js:1556 ODD_QUOTES(7) ['Выберите верный глагол: You ... smoke in public places — it is strictly forbidden.', ["mustn't", "don't have
+curriculum-9-11.js:1557 ODD_QUOTES(7) ['Выберите верный глагол: You ... do it if you don\'t want to — nobody will be angry.', ["mustn't", "don't hav
+curriculum-9-11.js:1566 ODD_QUOTES(9) ['Выберите верный глагол: It ... be true — I know he is an honest man.', ['may', "can't", 'must'], 1, 'Уверенн
+curriculum-9-11.js:2951 ODD_QUOTES(3) ['Выберите правильный вариант: "Look at those dark clouds! It ... ." ["is going to rain", "will rain", "rains"
+curriculum-9-11.js:2952 ODD_QUOTES(3) ['Выберите правильный вариант: "By the time we got to the cinema, the film ... ." ["had already started", "has
+curriculum-9-11.js:2953 ODD_QUOTES(7) ['Раскройте скобки, поставив глагол в правильную форму: "Quiet, please! I ... (try) to concentrate."', null, [
+curriculum-9-11.js:2954 ODD_QUOTES(3) ['Выберите правильный вариант: "He said he ... the document the day before." ["has signed", "had signed", "sig
+curriculum-9-11.js:2955 ODD_QUOTES(3) ['Выберите правильный вариант: "I ... in this city since 2015." ["am living", "lived", "have lived"], 2, 'Марк
+curriculum-9-11.js:2958 ODD_QUOTES(3) ['Выберите правильный вариант: "While she ... in the park, she found a wallet." ["walked", "was walking", "has
+curriculum-9-11.js:2959 ODD_QUOTES(7) ['Раскройте скобки: "By June we ... (complete) the project."', null, ['will have completed', "'ll have complet
+curriculum-9-11.js:2960 ODD_QUOTES(3) ['Выберите правильный вариант: "If you heat water to 100 degrees, it ... ." ["boils", "will boil", "is boiling
+curriculum-9-11.js:2961 ODD_QUOTES(3) ['Выберите правильный вариант: "His hands and face are dirty. He ... his bike." ["has repaired", "repaired", "
+curriculum-9-11.js:2962 ODD_QUOTES(3) ['Выберите правильный вариант: "The teacher explained that the Earth ... around the Sun." ["moves", "moved", "
+curriculum-9-11.js:2972 ODD_QUOTES(3) ['Выберите правильный вариант: "My sister avoids ... me personal questions." ["to ask", "asking", "ask"], 1, '
+curriculum-9-11.js:2973 ODD_QUOTES(3) ['Выберите правильный вариант: "We hope ... the problem by Friday." ["to solve", "solving", "solve"], 0, 'Посл
+curriculum-9-11.js:2975 ODD_QUOTES(3) ['Выберите правильный вариант: "He stopped ... TV and went to his room to study." ["to watch", "watch", "watch
+curriculum-9-11.js:2979 ODD_QUOTES(3) ['Выберите правильный вариант: "I look forward to ... from you soon." ["hear", "hearing", "to hear"], 1, 'В фр
+curriculum-9-11.js:2980 ODD_QUOTES(3) ['Выберите правильный вариант: "You had better ... a doctor about that cough." ["see", "to see", "seeing"], 0,
+curriculum-9-11.js:2982 ODD_QUOTES(3) ['Выберите правильный вариант: "The house ... now will be a hotel." ["being built", "built", "to build"], 0, '
+curriculum-9-11.js:2983 ODD_QUOTES(3) ['Выберите правильный вариант: "Let the children ... outside while we finish dinner." ["to play", "play", "pla
+curriculum-9-11.js:2993 ODD_QUOTES(3) ['Выберите правильный вариант: "If the weather ... fine tomorrow, we\'ll go hiking." ["will be", "is", "was"],
+curriculum-9-11.js:2994 ODD_QUOTES(3) ['Выберите правильный вариант: "If I ... you, I would talk to the teacher about the problem." ["was", "am", "w
+curriculum-9-11.js:2995 ODD_QUOTES(7) ['Раскройте скобки: "If they had checked the timetable, they ... (not / miss) the train."', null, ['would not 
+curriculum-9-11.js:2996 ODD_QUOTES(3) ['Выберите правильный вариант: "I wish I ... how to swim — everyone is having fun at the pool." ["knew", "know
+curriculum-9-11.js:2997 ODD_QUOTES(3) ['Выберите правильный вариант: "... you hurry, you\'ll miss the opening ceremony." ["Unless", "If", "Provided 
+curriculum-9-11.js:3000 ODD_QUOTES(3) ['Выберите правильный вариант: "If she had taken my advice, she ... the contest." ["wouldn\'t have lost", "did
+curriculum-9-11.js:3001 ODD_QUOTES(3) ['Выберите правильный вариант: "It\'s high time you ... to bed." ["go", "went", "will go"], 1, 'Конструкция "i
+curriculum-9-11.js:3003 ODD_QUOTES(3) ['Выберите правильный вариант: "... I known about the problem, I would have helped you." ["Had", "Were", "Shou
+curriculum-9-11.js:3004 ODD_QUOTES(3) ['Выберите правильный вариант: "But for the traffic jams, we ... on time." ["arrived", "would have arrived", "
+curriculum-9-11.js:3014 ODD_QUOTES(3) ['Выберите правильный вариант: "The streets are all wet. It ... last night." ["must have rained", "must rain",
+curriculum-9-11.js:3015 ODD_QUOTES(3) ['Выберите правильный вариант: "You ... me about the change of plans! I waited at the wrong entrance for an ho
+curriculum-9-11.js:3017 ODD_QUOTES(3) ['Выберите правильный вариант: "We bought the tickets in advance, but the concert was cancelled. We ... them a
+curriculum-9-11.js:3018 ODD_QUOTES(3) ['Выберите правильный вариант: "He ... have failed the test — he knows the subject perfectly." ["mustn\'t", "n
+curriculum-9-11.js:3022 ODD_QUOTES(3) ['Выберите правильный вариант: "The door was locked, so we ... climb in through the window." ["must", "had to"
+curriculum-9-11.js:3024 ODD_QUOTES(3) ['Выберите правильный вариант: "There was a map on the wall! You ... me the way." ["could have shown", "must h
+curriculum-9-11.js:3025 ODD_QUOTES(3) ['Выберите правильный вариант: "By the end of the summer camp the children ... speak some English." ["must to"
+curriculum-9-11.js:3037 ODD_QUOTES(3) ['Выберите правильное слово: "The new programme helps ... young people find their first job." ["unemployed", "
+curriculum-9-11.js:3044 ODD_QUOTES(3) ['Выберите правильный глагол: "After a long discussion the committee ... a difficult decision." ["did", "made"
+curriculum-9-11.js:3046 ODD_QUOTES(3) ['Выберите правильное слово: "The government should provide ... for people who have lost their jobs." ["benefi
+curriculum-9-11.js TOPIC english-11-perfect-modals tests=1
+# curriculum-9-11.js: topics=140 [9кл:48 10кл:54 11кл:38] tests=279 questions=1400
+# curriculum.js: topics=34 [1кл:15 2кл:19] tests=68 questions=340

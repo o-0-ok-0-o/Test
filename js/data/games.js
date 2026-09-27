@@ -51,15 +51,26 @@ const GAME_DATA = {
   },
   // Игра 6: Замени слово местоимением (род)
   replace: {
-    // слово — индекс правильного местоимения в pronouns
     pronouns: ['ОН', 'ОНА', 'ОНО'],
     items: [
-      { word: 'СТОЛ', correct: 0 }, { word: 'ТЕТРАДЬ', correct: 1 },
-      { word: 'ОКНО', correct: 2 }, { word: 'КОТ', correct: 0 },
-      { word: 'КНИГА', correct: 1 }, { word: 'СОЛНЦЕ', correct: 2 },
-      { word: 'ДОМ', correct: 0 }, { word: 'ВЕСНА', correct: 1 },
-      { word: 'МОЛОКО', correct: 2 }, { word: 'САХАР', correct: 0 },
-      { word: 'МАМА', correct: 1 }, { word: 'НЕБО', correct: 2 }
+      { word: 'СТОЛ', correct: 0 }, { word: 'ТЕТРАДЬ', correct: 1 }, { word: 'ОКНО', correct: 2 },
+      { word: 'КОТ', correct: 0 }, { word: 'КНИГА', correct: 1 }, { word: 'СОЛНЦЕ', correct: 2 },
+      { word: 'ДОМ', correct: 0 }, { word: 'ВЕСНА', correct: 1 }, { word: 'МОЛОКО', correct: 2 },
+      { word: 'САХАР', correct: 0 }, { word: 'МАМА', correct: 1 }, { word: 'НЕБО', correct: 2 }
     ]
-  }
+  },
+  pairs: [
+    { term: 'Числитель', definition: 'Число над чертой дроби' },
+    { term: 'Знаменатель', definition: 'Число под чертой дроби' },
+    { term: 'Периметр', definition: 'Сумма длин сторон фигуры' },
+    { term: 'Площадь', definition: 'Мера поверхности фигуры' },
+    { term: 'Инфинитив', definition: 'Начальная форма глагола' }
+  ],
+  mathBlitz: [
+    { prompt: '7 × 8', answer: 56 }, { prompt: '144 ÷ 12', answer: 12 },
+    { prompt: '15 + 27', answer: 42 }, { prompt: '90 − 36', answer: 54 },
+    { prompt: '9²', answer: 81 }, { prompt: '√64', answer: 8 },
+    { prompt: '3/4 от 20', answer: 15 }, { prompt: '5 × 13', answer: 65 },
+    { prompt: '120 ÷ 5', answer: 24 }, { prompt: '18 + 19', answer: 37 }
+  ]
 };

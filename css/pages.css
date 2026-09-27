@@ -141,3 +141,36 @@ a.subject-card:hover { transform: translateY(-3px); border-color: var(--primary)
   .subject-grid { grid-template-columns: repeat(2, 1fr); }
   .quick-card { min-height: 110px; }
 }
+
+/* ===== Страница «Результаты по тестам» ===== */
+.page-head { margin-bottom: 6px; }
+.crumb { color: var(--muted); display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; }
+.crumb:hover { color: var(--primary); }
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 18px; }
+.chip { border: 1px solid var(--border); background: var(--card); border-radius: 999px; padding: 6px 14px; font-size: 0.85rem; cursor: pointer; }
+.chip:hover { border-color: var(--primary); }
+.chip-active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.results-subject { margin: 14px 0 8px; font-size: 1rem; }
+.test-results-list { display: flex; flex-direction: column; gap: 8px; }
+.test-result-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; }
+.test-result-row.not-attempted { opacity: 0.65; }
+.test-result-stats { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.test-result-stats .chip { cursor: default; }
+.test-result-stats .chip-active { background: var(--primary); }
+
+/* ===== Страница «Мои ошибки» ===== */
+.errors-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+.mistake-item { padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; margin: 8px 0; }
+.mistake-q { font-weight: 600; margin-bottom: 6px; }
+.mistake-correct { margin: 4px 0; }
+.mistake-explain { color: var(--muted); font-size: 0.9rem; margin: 4px 0; }
+.mistake-meta { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+
+/* ===== Профиль: разделы-ссылки ===== */
+.profile-sections { display: flex; flex-direction: column; gap: 10px; margin: 10px 0; }
+.section-link { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border: 1px solid var(--border); border-radius: 12px; text-decoration: none; color: inherit; transition: border-color 0.15s, transform 0.15s; }
+.section-link:hover { border-color: var(--primary); transform: translateY(-1px); }
+.section-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 10px; background: color-mix(in srgb, var(--primary) 12%, transparent); color: var(--primary); flex-shrink: 0; }
+.section-link strong { display: block; }
+.section-link small { color: var(--muted); }
+.section-count { margin-left: auto; color: var(--primary); font-weight: 600; white-space: nowrap; }

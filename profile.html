@@ -3,11 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Профиль — Учимся легко</title>
+  <script>
+    try {
+      const profile = JSON.parse(localStorage.getItem('ul:profile') || '{}');
+      const legacy = JSON.parse(localStorage.getItem('uchimsya-legko-v1') || '{}');
+      document.documentElement.dataset.theme = profile.theme || legacy.theme || 'light';
+    } catch (error) {
+      document.documentElement.dataset.theme = 'light';
+    }
+  </script>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%236c5ce7'/%3E%3Cpath d='M16 16h32v34H16z' fill='white'/%3E%3C/svg%3E">
+  <title>Профиль и статистика — Учимся легко</title>
+  <meta name="description" content="Смотри прогресс, достижения, учебную серию, ежедневные цели и результаты тестов.">
+  <meta property="og:title" content="Учимся легко — профиль и статистика">
+  <meta property="og:type" content="website">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/learning.css">
 </head>
 <body data-page="profile">
 
@@ -57,14 +71,16 @@
       </nav>
     </div>
     <div class="topbar-right">
-      <span class="xp-badge" aria-label="Опыт"><svg class="ic ic-sm" aria-hidden="true"><use href="#icon-star"/></svg> <span id="xpValue">0</span> XP</span>
+      <span class="xp-badge" aria-label="Опыт"><svg class="ic ic-sm" aria-hidden="true"><use href="#icon-star"/></svg> <span id="xpValue">0</span> XP</span><a class="level-top" href="profile.html" id="headerLevel">Ур. 1</a><a class="streak-top" href="profile.html" aria-label="Серия дней">Серия <strong id="headerStreak">0</strong></a>
       <button class="icon-btn" id="themeToggle" aria-label="Переключить тему"><svg class="ic" id="themeIcon" aria-hidden="true"><use href="#icon-sun"/></svg></button>
     </div>
   </header>
 
   <nav class="mobile-nav" aria-label="Основная навигация">
     <a class="nav-item" data-nav="home" href="index.html"><svg class="ic" aria-hidden="true"><use href="#icon-home"/></svg><span>Главная</span></a>
+    <a class="nav-item" data-nav="study" href="index.html#gradeGrid"><svg class="ic" aria-hidden="true"><use href="#icon-book"/></svg><span>Учёба</span></a>
     <a class="nav-item" data-nav="games" href="games.html"><svg class="ic" aria-hidden="true"><use href="#icon-gamepad"/></svg><span>Игры</span></a>
+    <a class="nav-item" data-nav="awards" href="profile.html#achievementsSection"><svg class="ic" aria-hidden="true"><use href="#icon-trophy"/></svg><span>Награды</span></a>
     <a class="nav-item" data-nav="profile" href="profile.html"><svg class="ic" aria-hidden="true"><use href="#icon-chart"/></svg><span>Профиль</span></a>
   </nav>
 
@@ -72,13 +88,16 @@
     <h1>Мой профиль</h1>
     <p class="subtitle" style="margin-bottom:18px">Твоя статистика, результаты и достижения.</p>
 
+    <section class="profile-hero card" id="profileHero"></section>
     <h2 style="font-size:1.15rem">Общая статистика</h2>
     <div class="stats-grid" id="profileStats"></div>
 
-    <h2 style="font-size:1.15rem;margin-top:24px">Результаты по тестам</h2>
-    <div id="testResultsList" style="margin-top:10px"></div>
+    <div class="profile-panels"><section class="card daily-panel" id="dailyPanel"></section><section class="card activity-panel"><h2>Календарь активности</h2><div id="activityCalendar"></div></section></div>
+    <section class="card progress-visuals"><h2>Прогресс по предметам</h2><div id="subjectProgress"></div></section>
+    <h2 style="font-size:1.15rem;margin-top:24px">Разделы статистики</h2>
+    <div class="profile-sections" id="profileSections"></div>
 
-    <h2 style="font-size:1.15rem;margin-top:24px">Достижения</h2>
+    <h2 id="achievementsSection" style="font-size:1.15rem;margin-top:24px">Достижения</h2>
     <div class="achievements" id="achievementsList" style="margin-top:10px"></div>
 
     <button class="btn danger full" id="resetProgress">Сбросить прогресс</button>
@@ -87,10 +106,18 @@
   <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="js/data/grades.js"></script>
   <script src="js/data/subjects.js"></script>
+  <script src="js/data/topics.js"></script>
+  <script src="js/data/curriculum.js"></script>
+  <script src="js/data/curriculum-3-4.js"></script>
+  <script src="js/data/curriculum-5-7.js"></script>
+  <script src="js/data/curriculum-8.js"></script>
+  <script src="js/data/curriculum-9-11.js"></script>
   <script src="js/data/tests.js"></script>
   <script src="js/data/achievements.js"></script>
   <script src="js/core/icons.js"></script>
+  <script src="js/services/storageService.js"></script>
   <script src="js/core/storage.js"></script>
   <script src="js/core/router.js"></script>
   <script src="js/core/ui.js"></script>

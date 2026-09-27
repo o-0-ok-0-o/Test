@@ -17,7 +17,7 @@
      match  — сопоставление (pairs: [{label, options, correct}])
    ========================================================= */
 
-const TESTS = [
+const LEGACY_TESTS = [
   {
     id: 'pronouns',
     subjectId: 'russian',
@@ -218,3 +218,20 @@ const TESTS = [
   }
   */
 ];
+
+const topicTests = COURSE_TOPICS.flatMap(topic => topic.tests.map(test => {
+  const questions = test.questions || LEGACY_TESTS.find(item => item.id === test.id)?.questions || topic.practiceQuestions;
+  test.questions = questions;
+  return {
+    ...test,
+    subjectId: topic.subjectId,
+    grade: topic.grade,
+    topicId: topic.id,
+    desc: topic.description,
+    theoryHtml: topic.theoryHtml,
+    difficulty: test.difficulty || (topic.difficulty === 'easy' ? 2 : topic.difficulty === 'hard' ? 4 : 3),
+    questions
+  };
+}));
+
+const TESTS = [...topicTests, ...LEGACY_TESTS.filter(test => !topicTests.some(item => item.id === test.id))];

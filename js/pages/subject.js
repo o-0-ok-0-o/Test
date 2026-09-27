@@ -27,55 +27,51 @@
   document.getElementById('crumbGrade').href = `grade.html?grade=${grade}`;
   document.getElementById('crumbSubject').textContent = subject.title;
 
-  const tests = Router.testsFor(subject.id, grade);
+  const topics = COURSE_TOPICS.filter(topic => topic.grade === grade && topic.subjectId === subject.id);
   const list = document.getElementById('testList');
+  const allTests = topics.flatMap(topic => topic.tests);
+  const completed = allTests.filter(test => App.state.progress.testStats[test.id]?.count).length;
+  const mastered = topics.filter(topic => App.state.progress.topicProgress[topic.id]?.mastered).length;
+  const attempted = allTests.filter(test => App.state.progress.testStats[test.id]);
+  const average = attempted.length ? Math.round(attempted.reduce((sum, test) => sum + App.state.progress.testStats[test.id].best / test.questions.length, 0) / attempted.length * 100) : '—';
+  document.getElementById('subjectOverview').innerHTML = `<div class="overview-stat"><strong>${topics.length}</strong><span>тем</span></div><div class="overview-stat"><strong>${mastered}/${topics.length}</strong><span>освоено</span></div><div class="overview-stat"><strong>${completed}/${allTests.length}</strong><span>тестов пройдено</span></div><div class="overview-stat"><strong>${average}${average === '—' ? '' : '%'}</strong><span>средний результат</span></div><div class="overview-stat"><strong>${App.state.profile.xp}</strong><span>XP всего</span></div>`;
 
-  if (!tests.length) {
-    list.innerHTML = `<div class="card empty-card">
-      <p class="muted">Для «${subject.title}» в ${grade} классе тесты скоро появятся.</p>
-      <button class="btn secondary" id="backToGrade">Выбрать другой предмет</button>
-    </div>`;
-    document.getElementById('backToGrade').addEventListener('click', () => Router.toGrade(grade));
+  if (!topics.length) {
+    list.innerHTML = '<div class="card empty-card"><p>Для этого класса пока нет учебных тем.</p></div>';
     return;
   }
 
-  list.innerHTML = tests.map(test => {
-    const ts = App.state.testStats[test.id];
-    const best = ts ? `${ts.best}/${test.questions.length}` : '—';
-    return `<article class="card test-card">
-      <div class="test-info">
-        <h3>${test.title}</h3>
-        <p class="muted">${test.desc}</p>
-        <div class="test-meta">
-          <span class="test-meta-item">${icon('quiz', 'ic-sm')} ${test.questions.length} вопросов</span>
-          <span class="test-meta-item">${UI.difficultyDots(test.difficulty || 3)}</span>
-          <span class="test-meta-item">${icon('trophy', 'ic-sm')} Лучший: ${best}</span>
-        </div>
-      </div>
-      <div class="test-actions">
-        ${test.theoryHtml ? `<button class="btn ghost btn-theory" data-theory="${test.id}">${icon('bulb', 'ic-sm')} Теория</button>` : ''}
-        <button class="btn primary" data-start="${test.id}">Начать ${icon('arrow-right', 'ic-sm')}</button>
-      </div>
-    </article>`;
+  const sections = [...new Set(topics.map(topic => topic.section))];
+  list.innerHTML = sections.map(section => {
+    const sectionTopics = topics.filter(topic => topic.section === section);
+    return `<section class="topic-section"><h2>${section}</h2>${sectionTopics.map((topic, index) => {
+      const progress = App.state.progress.topicProgress[topic.id];
+      const masteredTopic = Boolean(progress?.mastered);
+      const locked = index > 0 && !App.state.progress.topicProgress[sectionTopics[index - 1].id]?.mastered;
+      const state = masteredTopic ? 'Освоено' : locked ? 'Откроется после предыдущей темы' : progress ? 'Изучается' : 'Доступно';
+      const percent = progress ? Math.min(100, Math.round((progress.completedQuestions || 0) / (topic.practiceQuestions.length + topic.tests.reduce((sum, test) => sum + test.questions.length, 0)) * 100)) : 0;
+      const duration = Math.max(...topic.tests.map(test => test.estimatedTime || 5));
+      return `<a class="topic-row card ${masteredTopic ? 'mastered' : ''}" data-topic="${topic.id}" data-difficulty="${topic.difficulty}" data-duration="${duration}" href="topic.html?topic=${topic.id}">
+        <span class="topic-status">${masteredTopic ? icon('check') : icon('arrow-right')}</span><span class="topic-row-main"><strong>${topic.title}</strong><small>${topic.description}</small><span class="topic-inline-meta">${topic.tests.reduce((total, test) => total + test.questions.length, 0)} вопросов · сложность: ${topic.difficulty === 'easy' ? 'легко' : topic.difficulty === 'hard' ? 'сложно' : 'средне'}</span></span>
+        <span class="topic-progress"><span>${state}</span><i><b style="width:${percent}%"></b></i></span></a>`;
+    }).join('')}</section>`;
   }).join('');
 
-  // Делегирование кликов
-  list.addEventListener('click', (e) => {
-    const startBtn = e.target.closest('[data-start]');
-    if (startBtn) { Router.toQuiz(startBtn.dataset.start); return; }
+  const topicFilter = document.getElementById('topicFilter');
+  topicFilter.insertAdjacentHTML('beforeend', topics.map(topic => `<option value="${topic.id}">${topic.title}</option>`).join(''));
+  const applyFilters = () => {
+    const topicId = topicFilter.value;
+    const difficulty = document.getElementById('difficultyFilter').value;
+    const duration = document.getElementById('durationFilter').value;
+    let visible = 0;
+    list.querySelectorAll('[data-topic]').forEach(row => {
+      const show = (topicId === 'all' || row.dataset.topic === topicId) && (difficulty === 'all' || row.dataset.difficulty === difficulty) && (duration === 'all' || Number(row.dataset.duration) <= Number(duration));
+      row.hidden = !show;
+      if (show) visible++;
+    });
+    list.querySelectorAll('.topic-section').forEach(section => { section.hidden = !section.querySelector('[data-topic]:not([hidden])'); });
+    document.getElementById('filterEmpty').hidden = visible > 0;
+  };
+  [topicFilter, document.getElementById('difficultyFilter'), document.getElementById('durationFilter')].forEach(select => select.addEventListener('change', applyFilters));
 
-    const theoryBtn = e.target.closest('[data-theory]');
-    if (theoryBtn) {
-      const test = tests.find(t => t.id === theoryBtn.dataset.theory);
-      if (!test) return;
-      // Теория — в отдельном окошке (модалка)
-      UI.showModal(`
-        <div class="theory-modal-head">
-          <h3>${icon('bulb', 'ic-sm')} Теория: ${test.title}</h3>
-          <button class="icon-btn" data-close aria-label="Закрыть">${icon('cross', 'ic-sm')}</button>
-        </div>
-        <div class="theory-modal-body">${test.theoryHtml}</div>
-        <button class="btn primary full" data-close>Понятно, к тесту!</button>`);
-    }
-  });
 })();

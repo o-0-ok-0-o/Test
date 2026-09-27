@@ -3,11 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Учимся легко — тренажёр знаний</title>
+  <script>
+    try {
+      const profile = JSON.parse(localStorage.getItem('ul:profile') || '{}');
+      const legacy = JSON.parse(localStorage.getItem('uchimsya-legko-v1') || '{}');
+      document.documentElement.dataset.theme = profile.theme || legacy.theme || 'light';
+    } catch (error) {
+      document.documentElement.dataset.theme = 'light';
+    }
+  </script>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%236c5ce7'/%3E%3Cpath d='M16 16h32v34H16z' fill='white'/%3E%3C/svg%3E">
+  <title>Учимся легко — персональная платформа обучения</title>
+  <meta name="description" content="Изучай школьные предметы, тренируйся и отслеживай прогресс в Учимся легко.">
+  <meta property="og:title" content="Учимся легко — персональная платформа обучения">
+  <meta property="og:description" content="Теория, тренировки, тесты и игровой прогресс для 5–11 классов.">
+  <meta property="og:type" content="website">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/learning.css">
 </head>
 <body data-page="home">
 
@@ -56,24 +71,36 @@
       </nav>
     </div>
     <div class="topbar-right">
-      <span class="xp-badge" aria-label="Опыт"><svg class="ic ic-sm" aria-hidden="true"><use href="#icon-star"/></svg> <span id="xpValue">0</span> XP</span>
+      <span class="xp-badge" aria-label="Опыт"><svg class="ic ic-sm" aria-hidden="true"><use href="#icon-star"/></svg> <span id="xpValue">0</span> XP</span><a class="level-top" href="profile.html" id="headerLevel">Ур. 1</a><a class="streak-top" href="profile.html" aria-label="Серия дней">Серия <strong id="headerStreak">0</strong></a>
       <button class="icon-btn" id="themeToggle" aria-label="Переключить тему"><svg class="ic" id="themeIcon" aria-hidden="true"><use href="#icon-sun"/></svg></button>
     </div>
   </header>
 
   <nav class="mobile-nav" aria-label="Основная навигация">
     <a class="nav-item" data-nav="home" href="index.html"><svg class="ic" aria-hidden="true"><use href="#icon-home"/></svg><span>Главная</span></a>
+    <a class="nav-item" data-nav="study" href="index.html#gradeGrid"><svg class="ic" aria-hidden="true"><use href="#icon-book"/></svg><span>Учёба</span></a>
     <a class="nav-item" data-nav="games" href="games.html"><svg class="ic" aria-hidden="true"><use href="#icon-gamepad"/></svg><span>Игры</span></a>
+    <a class="nav-item" data-nav="awards" href="profile.html#achievementsSection"><svg class="ic" aria-hidden="true"><use href="#icon-trophy"/></svg><span>Награды</span></a>
     <a class="nav-item" data-nav="profile" href="profile.html"><svg class="ic" aria-hidden="true"><use href="#icon-chart"/></svg><span>Профиль</span></a>
   </nav>
 
   <main class="container">
-    <div class="hero">
-      <h1>Учимся легко</h1>
-      <p class="subtitle">Выбери свой класс и начни тренировку.</p>
-    </div>
+    <section class="hero hero-dashboard">
+      <div><span class="eyebrow">ПЛАТФОРМА ДЛЯ УЧЁБЫ</span><h1>Добро пожаловать в «Учимся легко»!</h1>
+        <p class="subtitle" id="welcomeCopy">Выбери класс, чтобы начать обучение.</p></div>
+      <div class="dashboard-level"><span class="level-pill" id="levelBadge">Уровень 1 · Новичок</span><span class="streak-pill"><svg class="ic ic-sm" aria-hidden="true"><use href="#icon-fire"/></svg> Серия: <strong id="streakValue">0 дней</strong></span><div id="levelProgress"></div></div>
+    </section>
 
-    <h2>Твой класс</h2>
+    <section class="search-block" aria-label="Поиск по учебным материалам">
+      <label for="globalSearch">Найти тему, предмет или тест</label>
+      <input id="globalSearch" type="search" placeholder="Например, квадратные корни" autocomplete="off">
+      <div class="search-results" id="searchResults" role="status" aria-live="polite" hidden></div>
+    </section>
+
+    <section class="resume-card" id="resumeCard" hidden></section>
+
+    <h2>Выбери класс</h2>
+    <p class="muted section-note">От 5 до 11 класса · темы и прогресс подстраиваются под тебя</p>
     <div class="class-grid" id="gradeGrid"></div>
 
     <h2>Быстрый доступ</h2>
@@ -92,10 +119,18 @@
   <div class="confetti-layer" id="confettiLayer" aria-hidden="true"></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+  <script src="js/data/grades.js"></script>
   <script src="js/data/subjects.js"></script>
+  <script src="js/data/topics.js"></script>
+  <script src="js/data/curriculum.js"></script>
+  <script src="js/data/curriculum-3-4.js"></script>
+  <script src="js/data/curriculum-5-7.js"></script>
+  <script src="js/data/curriculum-8.js"></script>
+  <script src="js/data/curriculum-9-11.js"></script>
   <script src="js/data/tests.js"></script>
   <script src="js/data/achievements.js"></script>
   <script src="js/core/icons.js"></script>
+  <script src="js/services/storageService.js"></script>
   <script src="js/core/storage.js"></script>
   <script src="js/core/router.js"></script>
   <script src="js/core/ui.js"></script>

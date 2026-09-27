@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    try {
+      const profile = JSON.parse(localStorage.getItem('ul:profile') || '{}');
+      const legacy = JSON.parse(localStorage.getItem('uchimsya-legko-v1') || '{}');
+      document.documentElement.dataset.theme = profile.theme || legacy.theme || 'light';
+    } catch (error) {
+      document.documentElement.dataset.theme = 'light';
+    }
+  </script>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%236c5ce7'/%3E%3Cpath d='M16 16h32v34H16z' fill='white'/%3E%3C/svg%3E">
+  <meta name="description" content="Теория, тренировка и тест по школьной теме в Учимся легко.">
+  <title>Тема — Учимся легко</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/learning.css">
+</head>
+<body data-page="study">
+  <svg xmlns="http://www.w3.org/2000/svg" class="svg-sprite" aria-hidden="true"><symbol id="icon-book" viewBox="0 0 24 24"><path d="M4 4a2 2 0 0 1 2-2h13v20H6a2 2 0 0 1-2-2V4z" fill="currentColor"/></symbol><symbol id="icon-star" viewBox="0 0 24 24"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" fill="currentColor"/></symbol><symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="currentColor"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3" stroke="currentColor" stroke-width="2"/></symbol><symbol id="icon-moon" viewBox="0 0 24 24"><path d="M21 13A9 9 0 1 1 11 3 7 7 0 0 0 21 13z" fill="currentColor"/></symbol><symbol id="icon-home" viewBox="0 0 24 24"><path d="M12 3l9 8h-3v9h-5v-6h-2v6H6v-9H3z" fill="currentColor"/></symbol><symbol id="icon-gamepad" viewBox="0 0 24 24"><path d="M7 6h10a5 5 0 0 1 5 5v3a4 4 0 0 1-7 2l-2-2h-2l-2 2a4 4 0 0 1-7-2v-3a5 5 0 0 1 5-5z" fill="currentColor"/></symbol><symbol id="icon-chart" viewBox="0 0 24 24"><path d="M4 20V10h4v10H4zm6 0V4h4v16h-4zm6 0v-7h4v7h-4z" fill="currentColor"/></symbol><symbol id="icon-arrow-left" viewBox="0 0 24 24"><path d="M15 4l-8 8 8 8 2-2-6-6 6-6z" fill="currentColor"/></symbol><symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M9 4l8 8-8 8-2-2 6-6-6-6z" fill="currentColor"/></symbol><symbol id="icon-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5 2-2 3 3 9-9z" fill="currentColor"/></symbol><symbol id="icon-bulb" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 4 12v3H8v-3A7 7 0 0 1 12 2z" fill="currentColor"/></symbol><symbol id="icon-fire" viewBox="0 0 24 24"><path d="M12 2s5 5 5 9a5 5 0 0 1-10 0c0-2 1-4 2-5 0 3 2 3 2 3s-1-4 1-7z" fill="currentColor"/></symbol></svg>
+  <header class="topbar"><div class="topbar-left"><a class="logo" href="index.html">Учимся легко</a><nav class="desktop-nav"><a class="nav-item" data-nav="home" href="index.html">Главная</a><a class="nav-item" data-nav="games" href="games.html">Игры</a><a class="nav-item" data-nav="profile" href="profile.html">Профиль</a></nav></div><div class="topbar-right"><span class="xp-badge"><svg class="ic ic-sm"><use href="#icon-star"/></svg><span id="xpValue">0</span> XP</span><a class="level-top" href="profile.html" id="headerLevel">Ур. 1</a><a class="streak-top" href="profile.html" aria-label="Серия дней">Серия <strong id="headerStreak">0</strong></a><button class="icon-btn" id="themeToggle" aria-label="Сменить тему"><svg class="ic" id="themeIcon"><use href="#icon-sun"/></svg></button></div></header>
+  <nav class="mobile-nav" aria-label="Основная навигация"><a class="nav-item" data-nav="home" href="index.html"><svg class="ic"><use href="#icon-home"/></svg><span>Главная</span></a><a class="nav-item" data-nav="study" href="index.html#gradeGrid"><svg class="ic"><use href="#icon-book"/></svg><span>Учёба</span></a><a class="nav-item" data-nav="games" href="games.html"><svg class="ic"><use href="#icon-gamepad"/></svg><span>Игры</span></a><a class="nav-item" data-nav="awards" href="profile.html#achievementsSection"><svg class="ic"><use href="#icon-star"/></svg><span>Награды</span></a><a class="nav-item" data-nav="profile" href="profile.html"><svg class="ic"><use href="#icon-chart"/></svg><span>Профиль</span></a></nav>
+  <main class="container topic-page"><nav class="crumbs"><a href="index.html">Главная</a><span>/</span><a id="topicGradeCrumb">Класс</a><span>/</span><a id="topicSubjectCrumb">Предмет</a></nav><a class="btn ghost page-back" id="topicBack" href="#">← К предмету</a><header class="topic-hero"><span class="eyebrow" id="topicSection"></span><h1 id="topicTitle">Тема</h1><p class="subtitle" id="topicDescription"></p><div class="topic-meta" id="topicMeta"></div></header>
+    <nav class="topic-tabs" aria-label="Разделы темы"><a href="#tests">Тесты</a><a href="#practice">Тренировка</a><a href="#mistakes">Мои ошибки</a></nav>
+    <section class="card theory-content hidden" id="theory"><h2>Теория</h2><div id="theoryContent"></div></section>
+    <section class="card" id="practice"><div class="section-heading"><div><span class="eyebrow">ЗАКРЕПЛЕНИЕ</span><h2>Тренировка</h2></div><button class="btn primary" id="startPractice">Начать тренировку</button></div><p class="muted">Короткие вопросы с объяснениями после каждого ответа.</p></section>
+    <section id="tests"><h2>Тесты по теме</h2><div id="topicTests"></div></section>
+    <section class="card errors-card" id="mistakes"><div><span class="eyebrow">ПОВТОРЕНИЕ</span><h2>Мои ошибки</h2><p id="mistakeSummary">Ошибок по теме пока нет.</p></div><button class="btn secondary" id="retryMistakes" disabled>Повторить ошибки</button></section>
+  </main>
+  <div class="confetti-layer" id="confettiLayer"></div><div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="js/data/grades.js"></script><script src="js/data/subjects.js"></script><script src="js/data/topics.js"></script><script src="js/data/curriculum.js"></script><script src="js/data/curriculum-3-4.js"></script><script src="js/data/curriculum-5-7.js"></script><script src="js/data/curriculum-8.js"></script><script src="js/data/curriculum-9-11.js"></script><script src="js/data/tests.js"></script><script src="js/data/achievements.js"></script><script src="js/core/icons.js"></script><script src="js/services/storageService.js"></script><script src="js/core/storage.js"></script><script src="js/core/router.js"></script><script src="js/core/ui.js"></script><script src="js/features/topic.js"></script><script src="js/pages/topic.js"></script>
+</body></html>

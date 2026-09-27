@@ -1,0 +1,108 @@
+Загружено файлов: grades.js, subjects.js, topics.js, curriculum.js, curriculum-3-4.js, curriculum-5-7.js, curriculum-8.js, curriculum-9-11.js, tests.js
+Тем: 324 | Тестов (из тем): 615 | TESTS всего: 615
+По классам:
+  1 класс: тем 15, тестов 30, вопросов 150
+  2 класс: тем 19, тестов 38, вопросов 190
+  3 класс: тем 13, тестов 26, вопросов 130
+  4 класс: тем 14, тестов 28, вопросов 140
+  5 класс: тем 15, тестов 25, вопросов 140
+  6 класс: тем 18, тестов 31, вопросов 155
+  7 класс: тем 22, тестов 40, вопросов 200
+  8 класс: тем 53, тестов 102, вопросов 511
+  9 класс: тем 53, тестов 101, вопросов 505
+  10 класс: тем 60, тестов 114, вопросов 570
+  11 класс: тем 42, тестов 80, вопросов 400
+Ошибок: 51 | Предупреждений: 971
+Тем с количеством тестов менее 5: 324 (полный список: docs/CONTENT_AUDIT.md)
+Тестов с количеством вопросов менее 20: 614 (полный список: docs/CONTENT_AUDIT.md)
+  ERROR english-11-tenses-t1q1: пустой текст вопроса
+  ERROR english-11-tenses-t1q2: пустой текст вопроса
+  ERROR english-11-tenses-t1q4: пустой текст вопроса
+  ERROR english-11-tenses-t1q4: нет вариантов
+  ERROR english-11-tenses-t1q5: пустой текст вопроса
+  ERROR english-11-tenses-t1q5: нет вариантов
+  ERROR english-11-tenses-t2q1: пустой текст вопроса
+  ERROR english-11-tenses-t2q1: нет вариантов
+  ERROR english-11-tenses-t2q3: пустой текст вопроса
+  ERROR english-11-tenses-t2q4: пустой текст вопроса
+  ERROR english-11-tenses-t2q4: нет вариантов
+  ERROR english-11-tenses-t2q5: пустой текст вопроса
+  ERROR english-11-non-finite-verbs-t1q1: пустой текст вопроса
+  ERROR english-11-non-finite-verbs-t1q1: нет вариантов
+  ERROR english-11-non-finite-verbs-t1q2: пустой текст вопроса
+  ERROR english-11-non-finite-verbs-t1q4: пустой текст вопроса
+  ERROR english-11-non-finite-verbs-t1q4: нет вариантов
+  ERROR english-11-non-finite-verbs-t2q1: пустой текст вопроса
+  ERROR english-11-non-finite-verbs-t2q1: нет вариантов
+  ERROR english-11-non-finite-verbs-t2q2: пустой текст вопроса
+  ERROR english-11-non-finite-verbs-t2q4: пустой текст вопроса
+  ERROR english-11-non-finite-verbs-t2q5: пустой текст вопроса
+  ERROR english-11-non-finite-verbs-t2q5: нет вариантов
+  ERROR english-11-conditionals-t1q1: пустой текст вопроса
+  ERROR english-11-conditionals-t1q1: нет вариантов
+  ERROR english-11-conditionals-t1q2: пустой текст вопроса
+  ERROR english-11-conditionals-t1q2: нет вариантов
+  ERROR english-11-conditionals-t1q4: пустой текст вопроса
+  ERROR english-11-conditionals-t1q5: пустой текст вопроса
+  ERROR english-11-conditionals-t2q1: пустой текст вопроса
+  ERROR english-11-conditionals-t2q2: пустой текст вопроса
+  ERROR english-11-conditionals-t2q2: нет вариантов
+  ERROR english-11-conditionals-t2q4: пустой текст вопроса
+  ERROR english-11-conditionals-t2q5: пустой текст вопроса
+  ERROR english-11-conditionals-t2q5: нет вариантов
+  ERROR english-11-perfect-modals-t1q1: пустой текст вопроса
+  ERROR english-11-perfect-modals-t1q2: пустой текст вопроса
+  ERROR english-11-perfect-modals-t1q2: нет вариантов
+  ERROR english-11-perfect-modals-t1q4: пустой текст вопроса
+  ERROR english-11-perfect-modals-t1q4: нет вариантов
+  ERROR english-11-perfect-modals-t1q5: пустой текст вопроса
+  ERROR english-11-perfect-modals-t1q5: нет вариантов
+  ERROR english-11-perfect-modals-t2q2: пустой текст вопроса
+  ERROR english-11-perfect-modals-t2q2: нет вариантов
+  ERROR english-11-perfect-modals-t2q4: пустой текст вопроса
+  ERROR english-11-perfect-modals-t2q5: пустой текст вопроса
+  ERROR english-11-perfect-modals-t2q5: нет вариантов
+  ERROR english-11-word-formation-t1q3: пустой текст вопроса
+  ERROR english-11-word-formation-t2q3: пустой текст вопроса
+  ERROR english-11-word-formation-t2q3: нет вариантов
+  ERROR english-11-word-formation-t2q5: пустой текст вопроса
+  WARN  topic[0] russian-5-pronouns: 1 тестов (требуется не менее 5)
+  WARN  topic[1] math-5-fractions: 1 тестов (требуется не менее 5)
+  WARN  math-5-fractions-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[2] biology-5-cells: 1 тестов (требуется не менее 5)
+  WARN  biology-5-life: вопросов 5 (требуется не менее 20)
+  WARN  topic[3] russian-6-verb: 1 тестов (требуется не менее 5)
+  WARN  russian-6-verb-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[4] math-6-ratios: 1 тестов (требуется не менее 5)
+  WARN  math-6-ratios-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[5] history-6-medieval: 1 тестов (требуется не менее 5)
+  WARN  history-6-cities-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[6] algebra-7-expressions: 1 тестов (требуется не менее 5)
+  WARN  algebra-7-equations-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[7] geometry-7-triangles: 1 тестов (требуется не менее 5)
+  WARN  geometry-7-triangles-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[8] russian-7-participle: 1 тестов (требуется не менее 5)
+  WARN  russian-7-participle-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[9] algebra-8-roots: 1 тестов (требуется не менее 5)
+  WARN  algebra-8-roots-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[10] algebra-8-equations: 1 тестов (требуется не менее 5)
+  WARN  algebra-8-equations-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[11] physics-8-pressure: 1 тестов (требуется не менее 5)
+  WARN  physics-8-pressure-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[12] chemistry-8-mixtures: 1 тестов (требуется не менее 5)
+  WARN  chemistry-8-mixtures-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[13] russian-9-punctuation: 1 тестов (требуется не менее 5)
+  WARN  russian-9-ssp-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[14] history-9-reforms: 1 тестов (требуется не менее 5)
+  WARN  history-9-reforms-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[15] biology-10-genetics: 1 тестов (требуется не менее 5)
+  WARN  biology-10-genetics-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[16] informatics-11-systems: 1 тестов (требуется не менее 5)
+  WARN  informatics-11-binary-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[17] geography-5-maps: 1 тестов (требуется не менее 5)
+  WARN  geography-5-maps-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[18] history-5-ancient: 1 тестов (требуется не менее 5)
+  WARN  history-5-ancient-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[19] biology-6-plants: 1 тестов (требуется не менее 5)
+  WARN  biology-6-plants-test: вопросов 5 (требуется не менее 20)
+  WARN  topic[20] geography-6-lithosphere: 1 тестов (требуется не менее 5)

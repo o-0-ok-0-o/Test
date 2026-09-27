@@ -12,6 +12,11 @@ const UI = {
   initHeader() {
     this.applyTheme();
     this.updateXPBadge();
+    const level = App.levelInfo();
+    const levelEl = document.getElementById('headerLevel');
+    const streakEl = document.getElementById('headerStreak');
+    if (levelEl) levelEl.textContent = `Ур. ${level.level}`;
+    if (streakEl) streakEl.textContent = App.state.activity.streak || 0;
 
     document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
 
@@ -26,13 +31,13 @@ const UI = {
   /* ---------- Тема ---------- */
 
   applyTheme() {
-    document.documentElement.dataset.theme = App.state.theme;
+    document.documentElement.dataset.theme = App.state.profile.theme;
     const t = document.getElementById('themeIcon');
-    if (t) t.innerHTML = `<use href="#icon-${App.state.theme === 'dark' ? 'sun' : 'moon'}"/>`;
+    if (t) t.innerHTML = `<use href="#icon-${App.state.profile.theme === 'dark' ? 'sun' : 'moon'}"/>`;
   },
 
   toggleTheme() {
-    App.state.theme = App.state.theme === 'dark' ? 'light' : 'dark';
+    App.state.profile.theme = App.state.profile.theme === 'dark' ? 'light' : 'dark';
     saveState();
     this.applyTheme();
   },
@@ -41,7 +46,12 @@ const UI = {
 
   updateXPBadge() {
     const el = document.getElementById('xpValue');
-    if (el) el.textContent = App.state.xp;
+    if (el) el.textContent = App.state.profile.xp;
+    const level = App.levelInfo();
+    const levelEl = document.getElementById('headerLevel');
+    const streakEl = document.getElementById('headerStreak');
+    if (levelEl) levelEl.textContent = `Ур. ${level.level}`;
+    if (streakEl) streakEl.textContent = App.state.activity.streak || 0;
   },
 
   /* ---------- Тосты ---------- */
@@ -78,15 +88,16 @@ const UI = {
 
   /** Модалка «Продолжить тест?» — вызывается на любой странице. */
   checkResume() {
-    const saved = App.state.currentQuiz;
+    const saved = App.state.progress.currentQuiz;
     if (!saved) return;
     const test = TESTS.find(t => t.id === saved.testId);
-    if (!test) { App.state.currentQuiz = null; saveState(); return; }
+    const topic = saved.topicId && COURSE_TOPICS.find(item => item.id === saved.topicId);
+    if (!test && !topic) { App.state.progress.currentQuiz = null; saveState(); return; }
 
     const total = saved.questionIds.length;
     const overlay = this.showModal(`
       <h3>Продолжить тест?</h3>
-      <p class="muted">Тест «${test.title}». Ты остановился на вопросе ${saved.index + 1} из ${total}.</p>
+      <p class="muted">Материал «${test?.title || topic.title}». Ты остановился на вопросе ${saved.index + 1} из ${total}.</p>
       <div class="btn-row">
         <button class="btn primary" id="resumeYes">Продолжить</button>
         <button class="btn ghost" id="resumeNo">Начать заново</button>
@@ -94,11 +105,12 @@ const UI = {
 
     document.getElementById('resumeYes').addEventListener('click', () => {
       overlay.remove();
-      Router.toQuiz(saved.testId);
+      if (saved.practice) Router.toPractice(saved.topicId, saved.questionIds);
+      else Router.toQuiz(saved.testId, saved.mode, saved.topicId);
     });
     document.getElementById('resumeNo').addEventListener('click', () => {
       overlay.remove();
-      App.state.currentQuiz = null;
+      App.state.progress.currentQuiz = null;
       saveState();
     });
   },

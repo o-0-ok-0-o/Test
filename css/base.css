@@ -3,11 +3,11 @@
    ========================================================= */
 
 :root {
-  --bg: #f4f5fb;
+  --bg: #f4f6fb;
   --card: #ffffff;
-  --primary: #6c5ce7;
-  --primary-dark: #5344c9;
-  --primary-light: #eae7ff;
+  --primary: #5b55d6;
+  --primary-dark: #4842b8;
+  --primary-light: #eeedff;
   --success: #27ae60;
   --success-light: #e6f7ee;
   --error: #e74c3c;
@@ -17,8 +17,8 @@
   --text: #23263b;
   --muted: #7a7f99;
   --border: #e3e5f0;
-  --shadow: 0 4px 14px rgba(90, 90, 160, 0.10);
-  --radius: 14px;
+  --shadow: 0 8px 24px rgba(37, 42, 87, 0.07);
+  --radius: 16px;
 }
 
 [data-theme="dark"] {
@@ -42,6 +42,7 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body { max-width: 100%; overflow-x: hidden; }
+html { background: var(--bg); }
 
 body {
   font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
@@ -49,11 +50,10 @@ body {
   color: var(--text);
   line-height: 1.55;
   min-height: 100vh;
-  padding-bottom: 76px; /* место для нижней навигации */
-  animation: pageIn 0.4s ease;
+  padding-bottom: calc(76px + env(safe-area-inset-bottom));
 }
 
-@keyframes pageIn { from { opacity: 0; } to { opacity: 1; } }
+::selection { color: #fff; background: var(--primary); }
 
 h1 { font-size: clamp(1.7rem, 6vw, 2.4rem); }
 h2 { font-size: clamp(1.3rem, 4.5vw, 1.6rem); margin-bottom: 6px; }

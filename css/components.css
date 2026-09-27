@@ -15,9 +15,10 @@
   min-height: 48px; padding: 12px 20px;
   border: none; border-radius: 12px;
   font-size: 1rem; font-weight: 600; font-family: inherit;
-  cursor: pointer; transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+  cursor: pointer; transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
   width: 100%;
 }
+.btn.primary { box-shadow: 0 5px 14px color-mix(in srgb, var(--primary) 24%, transparent); }
 .btn.primary { background: var(--primary); color: #fff; }
 .btn.primary:hover:not(:disabled) { background: var(--primary-dark); transform: translateY(-2px); }
 .btn.secondary { background: var(--primary-light); color: var(--primary); }
@@ -51,8 +52,7 @@
   border-radius: 6px; transition: width 0.4s ease;
 }
 
-.question-card { animation: cardIn 0.35s ease; }
-@keyframes cardIn { from { opacity: 0; transform: translateY(14px) scale(0.98); } to { opacity: 1; transform: none; } }
+.question-card { border-top: 3px solid var(--primary); }
 .question-text { font-size: 1.15rem; font-weight: 600; margin-bottom: 16px; }
 .question-hint { color: var(--muted); font-size: 0.85rem; margin-bottom: 14px; }
 
@@ -61,12 +61,12 @@
 .answer-btn {
   display: flex; align-items: center; gap: 12px;
   min-height: 52px; padding: 12px 14px;
-  background: var(--card); border: 2px solid var(--border);
+  background: var(--card); border: 1px solid var(--border);
   border-radius: 12px; font-size: 1rem; font-family: inherit;
   color: var(--text); cursor: pointer; text-align: left;
-  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+  transition: border-color 0.15s, background 0.15s;
 }
-.answer-btn:hover { border-color: var(--primary); transform: translateY(-1px); }
+.answer-btn:hover { border-color: var(--primary); background: var(--primary-light); }
 .answer-btn .letter {
   min-width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center;
   background: var(--primary-light); color: var(--primary);

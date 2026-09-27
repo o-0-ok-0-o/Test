@@ -17,15 +17,22 @@ const Quiz = {
   index: 0,
   results: [],    // { question, userAnswer, isCorrect }
   streak: 0,      // серия правильных ответов подряд
+  mode: 'exam',
+  topicId: null,
+  gameStart: 0,
 
   /** Начинает тест по id. questionsOverride — мини-тест из ошибок. */
-  start(testId, questionsOverride) {
+  start(testId, questionsOverride, options = {}) {
     const test = TESTS.find(t => t.id === testId);
-    if (!test) { UI.showToast('Тест не найден'); Router.toHome(); return; }
+    const sourceQuestions = questionsOverride || test?.questions;
+    if (!sourceQuestions) { UI.showToast('Тест не найден'); Router.toHome(); return; }
 
     this.active = true;
-    this.testId = questionsOverride ? null : test.id;
-    this.questions = questionsOverride || test.questions.slice();
+    this.testId = options.practice || questionsOverride ? null : test.id;
+    this.questions = sourceQuestions.slice();
+    this.mode = options.mode || App.state.profile.learningMode || 'exam';
+    this.topicId = options.topicId || test?.topicId || null;
+    this.gameStart = Date.now();
     this.index = 0;
     this.results = [];
     this.streak = 0;
@@ -37,10 +44,13 @@ const Quiz = {
   /** Сохраняет прогресс теста в LocalStorage (продолжение после обновления). */
   _saveProgress() {
     if (!this.active) {
-      App.state.currentQuiz = null;
+      App.state.progress.currentQuiz = null;
     } else {
-      App.state.currentQuiz = {
+      App.state.progress.currentQuiz = {
         testId: this.testId,
+        topicId: this.topicId,
+        mode: this.mode,
+        practice: this.testId === null,
         questionIds: this.questions.map(q => q.id),
         index: this.index,
         results: this.results,
@@ -53,13 +63,16 @@ const Quiz = {
   /** Восстанавливает сохранённый тест (после обновления страницы). */
   _restore(saved) {
     const test = TESTS.find(t => t.id === saved.testId);
-    if (!test) return false;
-    const questions = saved.questionIds
-      .map(id => test.questions.find(q => q.id === id))
-      .filter(Boolean);
+    const topic = saved.topicId && COURSE_TOPICS.find(item => item.id === saved.topicId);
+    if (!test && !topic) return false;
+    const bank = topic ? [...topic.practiceQuestions, ...topic.tests.flatMap(item => item.questions || [])] : test.questions;
+    const questions = saved.questionIds.map(id => bank.find(q => String(q.id) === String(id))).filter(Boolean);
     if (!questions.length) return false;
     this.active = true;
-    this.testId = saved.testId;
+    this.testId = saved.testId || null;
+    this.topicId = saved.topicId || null;
+    this.mode = saved.mode || 'exam';
+    this.gameStart = Date.now();
     this.questions = questions;
     this.index = saved.index;
     this.results = saved.results || [];
@@ -81,6 +94,7 @@ const Quiz = {
   /* ---------- Отрисовка вопроса ---------- */
 
   _render() {
+    this.awaitingAdvance = false;
     const q = this.questions[this.index];
     const total = this.questions.length;
     const card = document.getElementById('questionCard');
@@ -88,6 +102,12 @@ const Quiz = {
 
     document.getElementById('quizCounter').textContent = `Вопрос ${this.index + 1} из ${total}`;
     document.getElementById('progressFill').style.width = `${(this.index / total) * 100}%`;
+    const test = TESTS.find(item => item.id === this.testId);
+    const topic = this.topicId ? COURSE_TOPICS.find(item => item.id === this.topicId) : null;
+    const subject = getSubject(topic?.subjectId || test?.subjectId);
+    document.getElementById('quizSubject').textContent = subject?.title || 'Тренировка';
+    document.getElementById('quizTopic').textContent = topic?.title || test?.title || 'Повторение ошибок';
+    document.getElementById('quizModeLabel').textContent = this.mode === 'learn' ? 'Режим обучения' : 'Режим экзамена';
 
     // перезапуск CSS-анимации появления карточки
     card.style.animation = 'none';
@@ -97,14 +117,19 @@ const Quiz = {
     let html = `<p class="question-text">${q.question}</p>`;
     if (q.hint) html += `<p class="question-hint">${q.hint}</p>`;
 
-    if (q.type === 'single' || q.type === 'multi' || q.type === 'select') {
+    if (q.type === 'single' || q.type === 'multi' || q.type === 'select' || q.type === 'boolean' || q.type === 'true-false') {
       html += `<div class="answer-list" role="group">`;
       q.answers.forEach((a, i) => {
-        const letter = String.fromCharCode(1040 + i); // А, Б, В, Г
-        html += `<button class="answer-btn" data-idx="${i}" aria-label="Вариант: ${a}">
-          <span class="letter">${letter}</span><span>${a}</span></button>`;
+        const text = typeof a === 'string' ? a : a.text;
+        const letter = String.fromCharCode(1040 + i);
+        html += `<button class="answer-btn" data-idx="${i}" aria-label="Вариант: ${text}">
+          <span class="letter">${letter}</span><span>${text}</span></button>`;
       });
       html += `</div>`;
+    } else if (q.type === 'input') {
+      html += `<label class="input-answer-label" for="inputAnswer">Твой ответ</label><input class="answer-input" id="inputAnswer" autocomplete="off" aria-label="Введи ответ">`;
+    } else if (q.type === 'order') {
+      html += `<p class="question-hint">Выбери элементы по порядку, в котором они должны стоять.</p><div class="answer-list">${q.answers.map((a, i) => `<button class="answer-btn order-choice" data-idx="${i}"><span class="letter">${i + 1}</span><span>${a}</span></button>`).join('')}</div><ol class="order-list" id="orderSelection"></ol>`;
     } else if (q.type === 'find') {
       html += `<div class="word-row" role="group">`;
       q.words.forEach((w, i) => {
@@ -114,10 +139,11 @@ const Quiz = {
     } else if (q.type === 'match') {
       html += `<div class="match-grid">`;
       q.pairs.forEach((p, i) => {
-        html += `<div class="match-row"><span class="match-label">${p.label}</span>
-          <select data-idx="${i}" aria-label="Характеристика для ${p.label}">
+        const options = p.options || q.pairs.map(pair => pair.right);
+        html += `<div class="match-row"><span class="match-label">${p.label || p.left}</span>
+          <select data-idx="${i}" aria-label="Соответствие для ${p.label || p.left}">
             <option value="-1">— выбери —</option>
-            ${p.options.map((o, j) => `<option value="${j}">${o}</option>`).join('')}
+            ${options.map((o, j) => `<option value="${j}">${o}</option>`).join('')}
           </select></div>`;
       });
       html += `</div>`;
@@ -138,11 +164,10 @@ const Quiz = {
     card._selected = selected;
 
     const updateBtnState = () => {
-      if (q.type === 'match') {
-        nextBtn.disabled = !q.pairs.every((p, i) => selected.has(i));
-      } else {
-        nextBtn.disabled = selected.size === 0;
-      }
+      if (q.type === 'match') nextBtn.disabled = !q.pairs.every((p, i) => selected.has(i));
+      else if (q.type === 'input') nextBtn.disabled = !card.querySelector('#inputAnswer').value.trim();
+      else if (q.type === 'order') nextBtn.disabled = selected.size !== q.answers.length;
+      else nextBtn.disabled = selected.size === 0;
     };
 
     const toggleAnswer = (btn, isMulti) => {
@@ -162,7 +187,18 @@ const Quiz = {
       updateBtnState();
     };
 
-    if (q.type === 'match') {
+    if (q.type === 'input') {
+      card.querySelector('#inputAnswer').addEventListener('input', updateBtnState);
+    } else if (q.type === 'order') {
+      card.querySelectorAll('.order-choice').forEach(btn => btn.addEventListener('click', () => {
+        const idx = Number(btn.dataset.idx);
+        if (selected.has(idx)) return;
+        selected.add(idx);
+        btn.disabled = true;
+        card.querySelector('#orderSelection').insertAdjacentHTML('beforeend', `<li>${q.answers[idx]}</li>`);
+        updateBtnState();
+      }));
+    } else if (q.type === 'match') {
       card.querySelectorAll('select').forEach(sel => {
         sel.addEventListener('change', () => {
           if (sel.value === '-1') selected.delete(Number(sel.dataset.idx));
@@ -182,34 +218,59 @@ const Quiz = {
   /* ---------- Фиксация ответа и переход дальше ---------- */
 
   _next() {
+    if (this.awaitingAdvance) {
+      this.awaitingAdvance = false;
+      this._advance();
+      return;
+    }
     const q = this.questions[this.index];
     const selected = document.getElementById('questionCard')._selected;
     let userAnswer, isCorrect;
 
-    if (q.type === 'single' || q.type === 'select') {
+    if (q.type === 'single' || q.type === 'select' || q.type === 'boolean' || q.type === 'true-false') {
       userAnswer = [...selected][0];
       isCorrect = userAnswer === q.correctAnswer;
+    } else if (q.type === 'input') {
+      userAnswer = document.getElementById('inputAnswer').value.trim();
+      const accepted = Array.isArray(q.correctAnswer) ? q.correctAnswer : [q.correctAnswer];
+      isCorrect = accepted.some(answer => String(answer).trim().toLocaleLowerCase('ru') === userAnswer.toLocaleLowerCase('ru'));
+    } else if (q.type === 'order') {
+      userAnswer = [...selected];
+      isCorrect = userAnswer.length === q.correctAnswer.length && userAnswer.every((answer, index) => answer === q.correctAnswer[index]);
     } else if (q.type === 'multi' || q.type === 'find') {
       const correct = new Set(q.correctAnswer);
       userAnswer = [...selected].sort((a, b) => a - b);
       isCorrect = userAnswer.length === correct.size && userAnswer.every(i => correct.has(i));
     } else if (q.type === 'match') {
       userAnswer = q.pairs.map((p, i) => selected.get(i));
-      isCorrect = q.pairs.every((p, i) => selected.get(i) === p.correct);
+      isCorrect = q.pairs.every((p, i) => selected.get(i) === (p.correct ?? i));
     }
 
-    // Ответ фиксируется молча — правильность НЕ показывается
     this.results.push({ question: q, userAnswer, isCorrect });
-
-    // XP и серия считаются «в фоне»
+    App.recordAnsweredQuestion();
+    let answerXP = 0;
     if (isCorrect) {
       this.streak++;
-      App.addXP(10, true);
+      answerXP = App.claimReward(`answer:${this.topicId || this.testId}:${q.id}`, 20);
       if (this.streak >= 10) App.unlockAchievement('streak');
-    } else {
-      this.streak = 0;
-    }
+      if (this.streak === 20) App.unlockAchievement('streak20');
+    } else this.streak = 0;
 
+    if (this.mode === 'learn') {
+      const feedback = document.createElement('div');
+      feedback.className = `answer-feedback ${isCorrect ? 'is-correct' : 'is-wrong'}`;
+      feedback.innerHTML = `<strong>${isCorrect ? `Правильно!${answerXP ? ` +${answerXP} XP` : ''}` : 'Неправильно'}</strong><p>${isCorrect ? q.explanation : `Правильный ответ: ${this.formatCorrectAnswer(q)}. ${q.explanation}`}</p>`;
+      document.getElementById('questionCard').appendChild(feedback);
+      const nextBtn = document.getElementById('nextBtn');
+      nextBtn.textContent = this.index === this.questions.length - 1 ? 'Завершить' : 'Продолжить';
+      nextBtn.disabled = false;
+      this.awaitingAdvance = true;
+      return;
+    }
+    this._advance();
+  },
+
+  _advance() {
     this.index++;
     this._saveProgress();
     if (this.index >= this.questions.length) this._finish();
@@ -220,7 +281,7 @@ const Quiz = {
 
   _finish() {
     this.active = false;
-    App.state.currentQuiz = null;
+    App.state.progress.currentQuiz = null;
 
     const total = this.questions.length;
     const correct = this.results.filter(r => r.isCorrect).length;
@@ -228,33 +289,63 @@ const Quiz = {
     const percent = Math.round((correct / total) * 100);
     const grade = App.gradeFor(correct, total);
     const isFullTest = this.testId !== null;
-    const wasCompleted = App.state.testsCompleted > 0;
+    const wasCompleted = App.state.progress.testsCompleted > 0;
+    const elapsedSeconds = Math.max(0, Math.round((Date.now() - this.gameStart) / 1000));
+    App.state.activity.studySeconds += elapsedSeconds;
 
-    App.state.testsCompleted++;
-    App.state.totalCorrect += correct;
-    App.state.grades.push(grade);
+    if (isFullTest) {
+      App.state.progress.testsCompleted++;
+      App.state.progress.totalCorrect += correct;
+      App.state.progress.grades.push(grade);
+    }
 
     // Лучший результат конкретного теста
     if (isFullTest) {
-      const ts = App.state.testStats[this.testId] || { best: 0, bestGrade: null, count: 0 };
+      const ts = App.state.progress.testStats[this.testId] || { best: 0, bestGrade: null, count: 0 };
       ts.count++;
       if (correct > ts.best) { ts.best = correct; ts.bestGrade = grade; }
-      App.state.testStats[this.testId] = ts;
+      App.state.progress.testStats[this.testId] = ts;
 
-      if (correct > App.state.bestScore) {
-        App.state.bestScore = correct;
-        App.state.bestGrade = grade;
+      if (correct > App.state.progress.bestScore) {
+        App.state.progress.bestScore = correct;
+        App.state.progress.bestGrade = grade;
       }
+    }
+
+    if (this.topicId) {
+      const topicProgress = App.getTopicProgress(this.topicId);
+      topicProgress.tests[this.testId || 'practice'] = { best: Math.max(topicProgress.tests[this.testId || 'practice']?.best || 0, correct), total, completedAt: new Date().toISOString() };
+      topicProgress.completedQuestions += total;
+      const mistakes = this.results.filter(result => !result.isCorrect);
+      topicProgress.mistakes += mistakes.length;
+      topicProgress.lastMistakeIds = mistakes.map(result => result.question.id);
+      const unresolved = new Set(topicProgress.errorIds || []);
+      topicProgress.lastMistakeIds.forEach(id => unresolved.add(id));
+      this.results.filter(result => result.isCorrect).forEach(result => unresolved.delete(result.question.id));
+      topicProgress.errorIds = [...unresolved];
+      // Журнал ошибок: запись с контекстом вопроса и ответа ученика
+      mistakes.forEach(result => {
+        const question = { ...result.question, topicId: this.topicId, testId: this.testId };
+        App.recordMistake(question, result.userAnswer);
+      });
+      this.results.filter(result => result.isCorrect).forEach(result => App.resolveMistake(result.question.id));
+      if (correct / total >= 0.8 && isFullTest) topicProgress.mastered = true;
+      App.state.profile.lastTopicId = this.topicId;
     }
     saveState();
 
     let xp = 50 + correct * 10;
     if (correct === total && isFullTest) xp += 100;
-    App.addXP(xp);
+    const awardedXP = isFullTest ? App.claimReward(`quiz:${this.testId}`, xp) : App.claimReward(`practice:${this.topicId}:${this.questions.map(q => q.id).join('-')}`, Math.min(100, correct * 10));
+    if (awardedXP) UI.showToast(`+${awardedXP} XP`);
+    xp = awardedXP;
 
-    App.unlockAchievement('first');
-    if (correct >= 15) App.unlockAchievement('accuracy');
-    if (correct === total && isFullTest) App.unlockAchievement('perfect');
+    if (isFullTest) App.unlockAchievement('first');
+    if (isFullTest && correct === total) App.unlockAchievement('perfect');
+    const masteredTopics = Object.values(App.state.progress.topicProgress).filter(progress => progress.mastered).length;
+    if (masteredTopics >= 1) App.unlockAchievement('firstTopic');
+    if (masteredTopics >= 10) App.unlockAchievement('tenTopics');
+    if (isFullTest && correct >= 15) App.unlockAchievement('accuracy');
     if (wasCompleted && isFullTest) App.unlockAchievement('repeat');
 
     this._renderResult(correct, total, percent, grade, wrong, xp);
@@ -264,7 +355,8 @@ const Quiz = {
   _renderResult(correct, total, percent, grade, wrong, xp) {
     const perfect = correct === total;
     const test = TESTS.find(t => t.id === this.testId);
-    const testTitle = test ? test.title : 'Тест по ошибкам';
+    const topic = this.topicId && COURSE_TOPICS.find(item => item.id === this.topicId);
+    const testTitle = test ? test.title : topic ? topic.title : 'Тест по ошибкам';
 
     let html = `<div class="card result-card">`;
 
@@ -283,18 +375,21 @@ const Quiz = {
         <div class="result-grade" aria-label="Оценка ${grade}">${grade}</div>`;
     }
 
+    const elapsed = Math.max(0, Math.round((Date.now() - this.gameStart) / 1000));
+    const duration = `${String(Math.floor(elapsed / 60)).padStart(2, '0')}:${String(elapsed % 60).padStart(2, '0')}`;
     html += `
       <div class="result-stats">
         <div class="stat-box"><div class="value">${correct}</div><div class="label">Правильных</div></div>
         <div class="stat-box"><div class="value">${wrong}</div><div class="label">Ошибок</div></div>
         <div class="stat-box"><div class="value">${grade}</div><div class="label">Оценка</div></div>
+        <div class="stat-box"><div class="value">${duration}</div><div class="label">Время</div></div>
         <div class="stat-box"><div class="value">+${xp}</div><div class="label">XP</div></div>
       </div>
       <div class="btn-row">
         <button class="btn secondary" data-res="review">Посмотреть разбор</button>
         ${wrong > 0 ? `<button class="btn secondary" data-res="retry">${icon('repeat', 'ic-sm')} Повторить ошибки (${wrong})</button>` : ''}
         ${test ? `<button class="btn primary" data-res="restart">Пройти заново</button>` : ''}
-        ${test ? `<button class="btn ghost" data-res="tests">${icon('arrow-left', 'ic-sm')} К тестам</button>` : `<button class="btn ghost" data-res="home">На главную</button>`}
+        ${test ? `<button class="btn ghost" data-res="tests">${icon('arrow-left', 'ic-sm')} К тестам</button>` : topic ? `<button class="btn ghost" data-res="topic">${icon('arrow-left', 'ic-sm')} К теме</button>` : `<button class="btn ghost" data-res="home">На главную</button>`}
       </div>
     </div>`;
 
@@ -316,7 +411,10 @@ const Quiz = {
       if (t) Router.toSubject(t.grade, t.subjectId);
       else Router.toHome();
     });
-    screen.querySelector('[data-res="home"]').addEventListener('click', () => Router.toHome());
+    const homeBtn = screen.querySelector('[data-res="home"]');
+    if (homeBtn) homeBtn.addEventListener('click', () => Router.toHome());
+    const topicBtn = screen.querySelector('[data-res="topic"]');
+    if (topicBtn) topicBtn.addEventListener('click', () => Router.toTopic(this.topicId));
 
     if (perfect) UI.launchConfetti();
   },
@@ -327,7 +425,7 @@ const Quiz = {
     if (!mistakes.length) return;
     const word = mistakes.length === 1 ? 'ошибка' : (mistakes.length < 5 ? 'ошибки' : 'ошибок');
     UI.showToast(`У тебя ${mistakes.length} ${word}. Давай попробуем ещё раз.`);
-    this.start(null, mistakes);
+    this.start(null, mistakes, { practice: true, mode: 'learn', topicId: this.topicId });
   },
 
   /** Выход из теста с подтверждением (прогресс сохранится). */
@@ -339,18 +437,28 @@ const Quiz = {
   /* ---------- Форматирование ответов (для разбора) ---------- */
 
   formatCorrectAnswer(q) {
-    if (q.type === 'single' || q.type === 'select') return q.answers[q.correctAnswer];
-    if (q.type === 'multi') return q.correctAnswer.map(i => q.answers[i]).join(', ');
+    if (['single', 'select', 'boolean', 'true-false'].includes(q.type)) {
+      const answer = q.type === 'boolean' || q.type === 'true-false' ? q.answers[q.correctAnswer] : q.answers[q.correctAnswer];
+      return typeof answer === 'string' ? answer : answer?.text || '';
+    }
+    if (q.type === 'multi') return q.correctAnswer.map(i => typeof q.answers[i] === 'string' ? q.answers[i] : q.answers[i].text).join(', ');
     if (q.type === 'find') return q.correctAnswer.map(i => q.words[i]).join(', ');
-    if (q.type === 'match') return q.pairs.map(p => `${p.label} — ${p.options[p.correct]}`).join('; ');
+    if (q.type === 'input') return Array.isArray(q.correctAnswer) ? q.correctAnswer.join(' или ') : q.correctAnswer;
+    if (q.type === 'order') return q.correctAnswer.map(i => q.answers[i]).join(' → ');
+    if (q.type === 'match') return q.pairs.map((pair, index) => `${pair.label || pair.left} — ${pair.options ? pair.options[pair.correct] : pair.right}`).join('; ');
     return '';
   },
 
   formatUserAnswer(q, userAnswer) {
-    if (q.type === 'single' || q.type === 'select') return q.answers[userAnswer] ?? '— нет ответа —';
-    if (q.type === 'multi') return (userAnswer || []).map(i => q.answers[i]).join(', ') || '— нет ответа —';
+    if (['single', 'select', 'boolean', 'true-false'].includes(q.type)) {
+      const answer = q.answers[userAnswer];
+      return typeof answer === 'string' ? answer : answer?.text || '— нет ответа —';
+    }
+    if (q.type === 'multi') return (userAnswer || []).map(i => typeof q.answers[i] === 'string' ? q.answers[i] : q.answers[i].text).join(', ') || '— нет ответа —';
     if (q.type === 'find') return (userAnswer || []).map(i => q.words[i]).join(', ') || '— нет ответа —';
-    if (q.type === 'match') return q.pairs.map((p, i) => `${p.label} — ${p.options[userAnswer[i]]}`).join('; ');
+    if (q.type === 'input') return userAnswer || '— нет ответа —';
+    if (q.type === 'order') return (userAnswer || []).map(i => q.answers[i]).join(' → ') || '— нет ответа —';
+    if (q.type === 'match') return q.pairs.map((pair, index) => `${pair.label || pair.left} — ${pair.options ? pair.options[userAnswer[index]] : q.pairs[userAnswer[index]]?.right || '—'}`).join('; ');
     return '';
   },
 
